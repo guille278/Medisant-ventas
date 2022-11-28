@@ -35,8 +35,7 @@
             android:id="@+id/tv_order_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/teal_700" />
+            android:text=""/>
 
     </LinearLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

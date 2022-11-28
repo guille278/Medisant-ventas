@@ -1,15 +1,19 @@
 package com.example.medisantventas.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.medisantventas.OrderDetail;
 import com.example.medisantventas.R;
 
 import org.json.JSONArray;
@@ -32,7 +36,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         this.mContext = context;
     }
 
-    public class OrderViewHolder extends RecyclerView.ViewHolder {
+    public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView orderDate, orderTotal, orderStatus;
 
         public OrderViewHolder(@NonNull View itemView) {
@@ -40,6 +44,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             orderDate = itemView.findViewById(R.id.tv_order_date);
             orderTotal = itemView.findViewById(R.id.tv_order_total);
             orderStatus = itemView.findViewById(R.id.tv_order_status);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(mContext, OrderDetail.class);
+            try {
+                intent.putExtra("order_id", orders.getJSONObject(getAdapterPosition()).getString("id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            view.getContext().startActivity(intent);
         }
     }
 
