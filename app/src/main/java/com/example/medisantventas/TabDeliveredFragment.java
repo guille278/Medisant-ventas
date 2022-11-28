@@ -1,5 +1,7 @@
 package com.example.medisantventas;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ public class TabDeliveredFragment extends Fragment {
     Order order = new Order();
     RecyclerView recyclerView;
     RequestQueue queue;
+    private String token;
 
     public TabDeliveredFragment() {
         // Required empty public constructor
@@ -40,6 +43,8 @@ public class TabDeliveredFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        SharedPreferences preferences = view.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
         recyclerView = view.findViewById(R.id.rv_received);
         queue = Volley.newRequestQueue(view.getContext());
         JsonArrayRequest request = order.getOrders(
@@ -50,7 +55,7 @@ public class TabDeliveredFragment extends Fragment {
                     Toast.makeText(view.getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 },
                 order.DELIVERED,
-                "3|sMT9fhzJikrin98CmQSPkCLAQ7Zj6q35tFG7lZTV"
+                token
         );
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         queue.add(request);
@@ -67,7 +72,7 @@ public class TabDeliveredFragment extends Fragment {
                     Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 },
                 order.DELIVERED,
-                "3|sMT9fhzJikrin98CmQSPkCLAQ7Zj6q35tFG7lZTV"
+                token
         );
         queue.add(request);
     }
