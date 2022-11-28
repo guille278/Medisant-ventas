@@ -137,4 +137,35 @@ public class Order {
         };
         return request;
     }
+    public JsonObjectRequest updateOrder(Response.Listener listener, Response.ErrorListener error, String token, JSONObject data) {
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                Config.URL + "api/admin/orders/" + this.getId(),
+                data,
+                listener,
+                error
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return new Config().getHeaders(token);
+            }
+        };
+        return request;
+    }
+
+    public JsonObjectRequest deleteOrder(Response.Listener listener, Response.ErrorListener error, String token) {
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                Config.URL + "api/admin/orders/" + this.getId(),
+                null,
+                listener,
+                error
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return new Config().getHeaders(token);
+            }
+        };
+        return request;
+    }
 }

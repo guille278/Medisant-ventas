@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -78,7 +80,6 @@ public class OrderDetail extends AppCompatActivity {
                     JSONObject data = (JSONObject) listener;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         try {
-
                             userName.setText("Nombre: " + data.getJSONObject("user").getString("name"));
                             userEmail.setText("Correo electrónico: " + data.getJSONObject("user").getString("email"));
                             userAddress.setText("Dirección: " + data.getJSONObject("user").getString("address") + ", " + data.getJSONObject("user").getString("city"));
@@ -115,13 +116,54 @@ public class OrderDetail extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Actualizando...", Toast.LENGTH_SHORT).show();
+                RequestQueue queue1 = Volley.newRequestQueue(getApplicationContext());
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("status", orderStatus.getSelectedItemPosition() + 1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JsonObjectRequest request1 = order.updateOrder(
+                        response -> {
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
+                        },
+                        error -> {
+                            Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        },
+                        token,
+                        data
+                );
+                queue1.add(request1);
             }
         });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Cancelando...", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(OrderDetail.this);
+                builder.setTitle("Confirmación");
+                builder.setMessage("¿Desea cancelar este pedido?");
+                builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getApplicationContext(), "Cancelando...", Toast.LENGTH_SHORT).show();
+                        RequestQueue queue1 = Volley.newRequestQueue(getApplicationContext());
+                        JsonObjectRequest request1 = order.deleteOrder(
+                                response -> {
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                    finish();
+                                },
+                                error -> {
+                                    Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                                },
+                                token
+                        );
+                        queue1.add(request1);
+                    }
+                });
+                builder.setNegativeButton("Cancelar", null);
+                builder.create().show();
             }
         });
     }
