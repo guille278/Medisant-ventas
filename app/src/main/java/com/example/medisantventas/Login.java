@@ -71,6 +71,7 @@ public class Login extends AppCompatActivity {
                             }
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
+                            finish();
                         },
                         error -> {
                             Toast.makeText(this, "Error de autenticación", Toast.LENGTH_SHORT).show();
